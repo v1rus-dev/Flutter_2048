@@ -36,6 +36,7 @@ class _GameScreenState extends State<GameScreen> {
   late BoardManager boardManager;
   late ConfettiController _confettiController;
   int _currentScore = 0;
+  bool canUndo = false;
 
   @override
   void initState() {
@@ -71,6 +72,7 @@ class _GameScreenState extends State<GameScreen> {
     debugPrint('Your score: ${board.score}');
     setState(() {
       _currentScore = board.score;
+      canUndo = boardManager.canUndo;
     });
 
     if (board.won || board.over) {
@@ -102,7 +104,7 @@ class _GameScreenState extends State<GameScreen> {
           Column(
             children: [
               SizedBox(
-                height: 150,
+                height: 100,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -126,6 +128,32 @@ class _GameScreenState extends State<GameScreen> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: BoardWidget(),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Material(
+                color: canUndo
+                    ? Colors.amberAccent.withValues(alpha: 0.2)
+                    : Colors.grey.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(12),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () {
+                    boardManager.undo();
+                  },
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Text(
+                      'Undo',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
               )
             ],
           ),

@@ -33,16 +33,19 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(
             height: 8,
           ),
-          Slider(
-            min: 4,
-            value: _currentSliverValue.toDouble(),
-            max: 10,
-            onChanged: (value) {
-              debugPrint('New value: $value;');
-              setState(() {
-                _currentSliverValue = value.toInt();
-              });
-            },
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: Slider(
+              min: 4,
+              value: _currentSliverValue.toDouble(),
+              max: 6,
+              onChanged: (value) {
+                debugPrint('New value: $value;');
+                setState(() {
+                  _currentSliverValue = value.toInt();
+                });
+              },
+            ),
           )
         ],
       ),

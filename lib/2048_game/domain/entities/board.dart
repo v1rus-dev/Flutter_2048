@@ -24,6 +24,17 @@ class Board {
         won = false,
         undo = null;
 
+  Board clone() {
+    return Board(
+      score,
+      best,
+      tiles.map((tile) => tile.copyWith()).toList(), // копируем каждый tile
+      over: over,
+      won: won,
+      undo: null, // важно: не сохраняем undo внутри undo!
+    );
+  }
+
   //Create an immutable copy of the board
   Board copyWith(
           {int? score,

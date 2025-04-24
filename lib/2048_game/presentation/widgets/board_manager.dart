@@ -9,6 +9,9 @@ class BoardManager extends ChangeNotifier {
   final int countTiles;
   bool _isMoving = false;
   bool get isMoving => _isMoving;
+  final List<Board> _undoStack = [];
+  int _undoLimit = 5;
+  bool get canUndo => _undoStack.isNotEmpty;
 
   late final List<int> horizontalLeftOrder;
   late final List<int> horizontalRightOrder;
@@ -18,7 +21,12 @@ class BoardManager extends ChangeNotifier {
   Board _state = Board.newGame(0, []);
   Board get state => _state;
 
-  BoardManager({this.countTiles = 4, bool withDelayAnimationStart = false}) {
+  BoardManager({
+    this.countTiles = 4,
+    bool withDelayAnimationStart = false,
+    int undoLimit = 5,
+  }) {
+    _undoLimit = undoLimit;
     horizontalLeftOrder = generateRowOrder(countTiles);
     horizontalRightOrder = List.from(horizontalLeftOrder.reversed);
     verticalUpOrder = generateColumnOrder(countTiles);
@@ -65,6 +73,8 @@ class BoardManager extends ChangeNotifier {
   bool move(SwipeDirection direction) {
     if (_isMoving || _state.over || _state.won) return false;
 
+    _pushUndo();
+
     _isMoving = true;
 
     final order = _getOrder(direction);
@@ -102,6 +112,24 @@ class BoardManager extends ChangeNotifier {
 
   void endMove() {
     _isMoving = false;
+  }
+
+  void _pushUndo() {
+    // Добавим глубокую копию в стек
+    _undoStack.add(_state.clone());
+
+    // Ограничим размер стека
+    if (_undoStack.length > _undoLimit) {
+      _undoStack.removeAt(0); // удаляем самый старый
+    }
+  }
+
+  void undo() {
+    if (_undoStack.isNotEmpty) {
+      _state = _undoStack.removeLast();
+      _isMoving = false;
+      notifyListeners();
+    }
   }
 
   void merge() {
