@@ -17,7 +17,9 @@ class AppRouter {
         GoRoute(
           path: GameScreenPage.path,
           name: GameScreenPage.path,
-          builder: (context, state) => GameScreenPage(),
+          builder: (context, state) => GameScreenPage(
+            countOfItemsInRow: state.extra as int,
+          ),
         )
       ]);
 }
